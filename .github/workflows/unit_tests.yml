@@ -1,0 +1,22 @@
+name: Unit Tests
+
+on:
+  pull_request:
+    branches: [dev, master]
+  push:
+    branches: [dev]
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install speakeronnx
+        run: pip install speakeronnx
+      - name: Install plugin
+        run: pip install -e ".[test]"
+      - name: Run unit tests
+        run: pytest tests/test_unit.py -v

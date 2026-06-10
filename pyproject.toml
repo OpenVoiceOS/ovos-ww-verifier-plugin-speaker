@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ovos-ww-verifier-plugin-speaker"
+dynamic = ["version"]
+description = "OVOS wake word verifier plugin: reject wake words from non-enrolled speakers"
+license = {text = "Apache-2.0"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+authors = [{name = "JarbasAI", email = "jarbasai@mailfence.com"}]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "speakeronnx",
+    "ovos-plugin-manager",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "edge-tts",
+]
+
+[project.scripts]
+ovos-speaker-enroll = "ovos_ww_verifier_plugin_speaker.__main__:main"
+
+[project.entry-points."opm.wake_word.verifier"]
+ovos-ww-verifier-speaker = "ovos_ww_verifier_plugin_speaker:SpeakerVerifier"
+
+[project.urls]
+Homepage = "https://github.com/TigreGotico/ovos-ww-verifier-plugin-speaker"
+
+[tool.setuptools.dynamic]
+version = {attr = "version.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.package-data]
+"ovos_ww_verifier_plugin_speaker" = ["**/*"]

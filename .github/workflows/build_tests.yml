@@ -1,0 +1,19 @@
+name: Run Build Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [dev]
+  workflow_dispatch:
+
+jobs:
+  build_tests:
+    uses: OpenVoiceOS/gh-automations/.github/workflows/build-tests.yml@dev
+    secrets: inherit
+    with:
+      python_versions: '["3.10", "3.11", "3.12"]'
+      install_extras: 'test'
+      # Runs unit tests + the offline ovoscope bus-sequence tests. The real-model
+      # tests (test_e2e.py, test_ovoscope_models_e2e.py) self-skip without ffmpeg.
+      test_path: 'tests/'

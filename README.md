@@ -66,11 +66,37 @@ Add to `~/.config/mycroft/mycroft.conf` (or OpenVoiceOS equivalent):
 | `sample_width` | int | `2` | PCM sample width in bytes (2 = 16-bit) |
 | `channels` | int | `1` | PCM channel count |
 
+## Supported models
+
+The `model` key accepts any alias from
+[`speakeronnx`](https://github.com/TigreGotico/speakeronnx)'s registry (models are
+downloaded from HuggingFace on first use and cached):
+
+| Alias | Architecture |
+|---|---|
+| `wespeaker-resnet34` *(default)* | WeSpeaker ResNet34 r-vector |
+| `wespeaker-ecapa512` | WeSpeaker ECAPA-TDNN-512 |
+| `wespeaker-resnet293` | WeSpeaker ResNet293 (large) |
+| `campplus` | WeSpeaker CAM++ |
+| `campplus-zh-en` | CAM++ (zh/en) |
+| `eres2net` | ERes2Net |
+| `titanet-small` | NVIDIA TitaNet-Small |
+| `titanet-large` | NVIDIA TitaNet-Large |
+| `redimnet-b2` | ReDimNet-B2 |
+
 ## Threshold tuning
 
-The default threshold of `0.45` works well for the WeSpeaker ResNet34 model with clean
-microphone audio. Lower it (e.g. `0.35`) for noisier environments or distant microphones.
-Raise it (e.g. `0.55`) for stricter security.
+**The acceptance `threshold` is model-specific — it does not transfer between
+models.** Cosine-similarity scales differ enormously across architectures (in our
+tests the same enrolled-vs-guest pair scored ~0.95 / 0.89 on `titanet-small` but
+~0.17 / 0.14 on `campplus`). The default `0.45` is calibrated for the default
+`wespeaker-resnet34`; **if you change `model`, you must re-tune `threshold`.**
+
+To pick a value, enrol a speaker, then compare `verify()` scores for genuine vs.
+guest clips and choose a threshold that sits between them
+(`tests/test_ovoscope_models_e2e.py` calibrates this per model automatically). For
+a given model, lower the threshold for noisier or distant-microphone setups and
+raise it for stricter security.
 
 ## Python API
 
@@ -83,6 +109,22 @@ v.enroll("Alice", ["alice1.wav", "alice2.wav"])
 # In wake word callback:
 accepted = v.verify(pcm_bytes)  # True if Alice spoke
 ```
+
+## Testing
+
+```bash
+pip install -e ".[test]"
+pytest tests/test_unit.py tests/test_ovoscope_e2e.py   # fast, offline
+```
+
+- `test_unit.py` — verifier policy logic (enrolment, thresholds, fail-open).
+- `test_ovoscope_e2e.py` — drives the verifier through a real listener
+  (`ovoscope.MiniVoiceLoop`) and asserts a rejected speaker suppresses
+  `recognizer_loop:record_begin` on the bus. Fast; no model download.
+- `test_e2e.py` / `test_ovoscope_models_e2e.py` — real-model tests over **every**
+  `speakeronnx` model, using `edge-tts` synthetic voices to confirm only the
+  enrolled speaker triggers the wake word. Require `edge-tts` + `ffmpeg` and
+  download models; they skip automatically when unavailable.
 
 ## Dependencies
 

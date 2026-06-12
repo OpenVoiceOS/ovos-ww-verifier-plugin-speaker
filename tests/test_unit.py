@@ -58,7 +58,7 @@ class TestProfilePersistence(unittest.TestCase):
         """Enroll with a mocked embedder; profile should be saved to disk."""
         fake_emb = _random_emb()
 
-        with patch("ovos_ww_verifier_plugin_speaker.SpeakerEmbedder") as MockEmb:
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
             instance = MockEmb.return_value
             instance.embed.return_value = fake_emb
             v = self._make_verifier()
@@ -81,7 +81,7 @@ class TestProfilePersistence(unittest.TestCase):
         """Mean embedding of two identical clips == the clip embedding."""
         fake_emb = _random_emb()
 
-        with patch("ovos_ww_verifier_plugin_speaker.SpeakerEmbedder") as MockEmb:
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
             instance = MockEmb.return_value
             instance.embed.return_value = fake_emb
             v = self._make_verifier()
@@ -97,7 +97,7 @@ class TestProfilePersistence(unittest.TestCase):
 
     def test_remove_profile(self):
         fake_emb = _random_emb()
-        with patch("ovos_ww_verifier_plugin_speaker.SpeakerEmbedder") as MockEmb:
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
             instance = MockEmb.return_value
             instance.embed.return_value = fake_emb
             v = self._make_verifier()
@@ -159,7 +159,7 @@ class TestVerifyLogic(unittest.TestCase):
         v = self._make_verifier({"threshold": 0.45})
         self._enroll_profile(v, "Alice", profile_emb)
 
-        with patch("ovos_ww_verifier_plugin_speaker.SpeakerEmbedder") as MockEmb:
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
             instance = MockEmb.return_value
             instance.embed.return_value = profile_emb  # exact match
             v._embedder = instance
@@ -173,7 +173,7 @@ class TestVerifyLogic(unittest.TestCase):
         v = self._make_verifier({"threshold": 0.45})
         self._enroll_profile(v, "Alice", profile_emb)
 
-        with patch("ovos_ww_verifier_plugin_speaker.SpeakerEmbedder") as MockEmb:
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
             instance = MockEmb.return_value
             instance.embed.return_value = unknown_emb
             v._embedder = instance
@@ -190,7 +190,7 @@ class TestVerifyLogic(unittest.TestCase):
         self._enroll_profile(v, "Alice", alice_emb)
         self._enroll_profile(v, "Bob", bob_emb)
 
-        with patch("ovos_ww_verifier_plugin_speaker.SpeakerEmbedder") as MockEmb:
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
             instance = MockEmb.return_value
             instance.embed.return_value = caller_emb
             v._embedder = instance
@@ -208,7 +208,7 @@ class TestVerifyLogic(unittest.TestCase):
         })
         self._enroll_profile(v, "GuestPass", profile_emb)
 
-        with patch("ovos_ww_verifier_plugin_speaker.SpeakerEmbedder") as MockEmb:
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
             instance = MockEmb.return_value
             instance.embed.return_value = caller_emb
             v._embedder = instance
@@ -221,7 +221,7 @@ class TestVerifyLogic(unittest.TestCase):
         v = self._make_verifier({"fail_open": True})
         self._enroll_profile(v, "Alice", profile_emb)
 
-        with patch("ovos_ww_verifier_plugin_speaker.SpeakerEmbedder") as MockEmb:
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
             instance = MockEmb.return_value
             instance.embed.side_effect = ValueError("too short")
             v._embedder = instance
@@ -234,7 +234,7 @@ class TestVerifyLogic(unittest.TestCase):
         v = self._make_verifier({"fail_open": False})
         self._enroll_profile(v, "Alice", profile_emb)
 
-        with patch("ovos_ww_verifier_plugin_speaker.SpeakerEmbedder") as MockEmb:
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
             instance = MockEmb.return_value
             instance.embed.side_effect = ValueError("too short")
             v._embedder = instance
@@ -243,7 +243,7 @@ class TestVerifyLogic(unittest.TestCase):
     def test_profile_cache_invalidated_after_enroll(self):
         """list_profiles() reflects newly enrolled name immediately."""
         v = self._make_verifier()
-        with patch("ovos_ww_verifier_plugin_speaker.SpeakerEmbedder") as MockEmb:
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
             instance = MockEmb.return_value
             instance.embed.return_value = _random_emb()
             v._embedder = instance

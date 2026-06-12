@@ -56,8 +56,13 @@ from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
-from speakeronnx import SpeakerEmbedder, cosine
+# NOTE: ``speakeronnx`` pulls in onnxruntime (a multi-second import). It is
+# imported lazily inside the methods that need it so that merely loading this
+# plugin class — as OPM does for every installed plugin at startup — stays cheap.
 from ovos_plugin_manager.templates.hotwords import HotWordVerifier
+
+if False:  # type-checking only; avoids the heavy import at module load
+    from speakeronnx import SpeakerEmbedder
 
 # ---------------------------------------------------------------------------
 # XDG data directory
@@ -150,8 +155,9 @@ class SpeakerVerifier(HotWordVerifier):
     # Private helpers
     # ------------------------------------------------------------------
 
-    def _get_embedder(self) -> SpeakerEmbedder:
+    def _get_embedder(self) -> "SpeakerEmbedder":
         if self._embedder is None:
+            from speakeronnx import SpeakerEmbedder
             self._embedder = SpeakerEmbedder(model=self._model_alias)
         return self._embedder
 
@@ -215,6 +221,7 @@ class SpeakerVerifier(HotWordVerifier):
             except OSError:
                 pass
 
+        from speakeronnx import cosine
         for name, profile_emb in profiles.items():
             score = cosine(emb, profile_emb)
             if score >= self._threshold_for(name):

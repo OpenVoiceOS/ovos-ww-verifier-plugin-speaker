@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.1a4](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.1a4) (2026-06-13)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.1a3...0.0.1a4)
+
+**Merged pull requests:**
+
+- refactor: mypy config, additional enrollment edge-case tests [\#3](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/3) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.1a3](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.1a3) (2026-06-13)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.1a2...0.0.1a3)

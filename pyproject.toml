@@ -25,10 +25,11 @@ test = [
     "pytest",
     "edge-tts",
     # bus-sequence e2e: drive the verifier through a real DinkumVoiceLoop.
-    # >=0.6.0a1 is the first release whose _detect_ww consults the verifier
-    # chain (the hotword-verifier gate); older builds never suppress on reject.
+    # Pinned to the alpha whose _detect_ww consults the verifier chain (the
+    # hotword-verifier gate) — the suppression tests are meaningless without it,
+    # so this is a hard requirement rather than a best-effort skip.
     "ovoscope>=0.19.0a1",
-    "ovos-dinkum-listener>=0.6.0a1",
+    "ovos-dinkum-listener==0.6.0a1",
 ]
 
 [project.scripts]

@@ -18,8 +18,6 @@ import os
 import tempfile
 import unittest
 
-import inspect
-
 import numpy as np
 
 try:
@@ -28,22 +26,9 @@ try:
 except ImportError:
     HAS_OVOSCOPE = False
 
-# Suppression only happens if the installed ovos-dinkum-listener consults the
-# verifier chain inside _detect_ww (the hotword-verifier gate, dinkum >=0.6.0a1).
-# Accept-path tests work regardless; reject-path tests need the gate.
-try:
-    from ovos_dinkum_listener.voice_loop.voice_loop import DinkumVoiceLoop
-    HAS_VERIFY_GATE = "self.hotwords.verify" in inspect.getsource(
-        DinkumVoiceLoop._detect_ww
-    )
-except Exception:
-    HAS_VERIFY_GATE = False
-
 from ovos_ww_verifier_plugin_speaker import SpeakerVerifier
 
 SILENT_CHUNK = b"\x00" * 512
-
-_GATE_REASON = "ovos-dinkum-listener lacks the hotword-verifier gate (<0.6.0a1)"
 
 
 class _FakeEmbedder:
@@ -83,7 +68,6 @@ class TestSpeakerVerifierBusGate(unittest.TestCase):
         vl, msgs = self._drive(self._verifier(fail_open=True))
         vl.assert_wakeword_detected(msgs)
 
-    @unittest.skipUnless(HAS_VERIFY_GATE, _GATE_REASON)
     def test_fail_closed_empty_roster_suppresses(self):
         """No enrolled profiles + fail_open=False → detection suppressed."""
         vl, msgs = self._drive(self._verifier(fail_open=False))
@@ -99,7 +83,6 @@ class TestSpeakerVerifierBusGate(unittest.TestCase):
         vl, msgs = self._drive(v)
         vl.assert_wakeword_detected(msgs)
 
-    @unittest.skipUnless(HAS_VERIFY_GATE, _GATE_REASON)
     def test_unenrolled_speaker_rejected(self):
         """An embedding below threshold for every profile suppresses recording."""
         v = self._verifier(threshold=0.45)
@@ -108,7 +91,6 @@ class TestSpeakerVerifierBusGate(unittest.TestCase):
         vl, msgs = self._drive(v)
         vl.assert_wakeword_suppressed(msgs)
 
-    @unittest.skipUnless(HAS_VERIFY_GATE, _GATE_REASON)
     def test_per_profile_threshold_rejects(self):
         """A stricter per-profile threshold can reject an otherwise-close match."""
         v = self._verifier(

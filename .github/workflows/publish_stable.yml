@@ -12,7 +12,7 @@ jobs:
     secrets: inherit
     with:
       branch: 'master'
-      version_file: 'version.py'
+      version_file: 'ovos_ww_verifier_plugin_speaker/version.py'
       publish_release: true
       publish_pypi: true
       sync_dev: true

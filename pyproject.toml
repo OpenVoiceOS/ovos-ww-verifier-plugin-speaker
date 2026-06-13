@@ -39,7 +39,7 @@ ovos-ww-verifier-speaker = "ovos_ww_verifier_plugin_speaker:SpeakerVerifier"
 Homepage = "https://github.com/TigreGotico/ovos-ww-verifier-plugin-speaker"
 
 [tool.setuptools.dynamic]
-version = {attr = "version.__version__"}
+version = {attr = "ovos_ww_verifier_plugin_speaker.version.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["."]

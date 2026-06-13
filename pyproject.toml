@@ -24,9 +24,11 @@ dependencies = [
 test = [
     "pytest",
     "edge-tts",
-    # bus-sequence e2e: drive the verifier through a real DinkumVoiceLoop
+    # bus-sequence e2e: drive the verifier through a real DinkumVoiceLoop.
+    # >=0.6.0a1 is the first release whose _detect_ww consults the verifier
+    # chain (the hotword-verifier gate); older builds never suppress on reject.
     "ovoscope>=0.19.0a1",
-    "ovos-dinkum-listener",
+    "ovos-dinkum-listener>=0.6.0a1",
 ]
 
 [project.scripts]

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.1a3](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.1a3) (2026-06-13)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.1a2...0.0.1a3)
+
+**Merged pull requests:**
+
+- test: hard-require imports + committed audio fixtures \(no edge-tts/skips in CI\) [\#6](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/6) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.1a2](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.1a2) (2026-06-13)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/61b7caa7451d166b4497fb638a9f4d1b323a7a14...0.0.1a2)

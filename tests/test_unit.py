@@ -256,5 +256,91 @@ class TestVerifyLogic(unittest.TestCase):
         self.assertIn("Charlie", v.list_profiles())
 
 
+class TestEnrollEdgeCases(unittest.TestCase):
+    """Edge cases in enrollment and configuration defaults."""
+
+    def setUp(self):
+        self._tmp = tempfile.mkdtemp()
+        self._path = os.path.join(self._tmp, "profiles.json")
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self._tmp, ignore_errors=True)
+
+    def _make_verifier(self, extra_cfg=None):
+        from ovos_ww_verifier_plugin_speaker import SpeakerVerifier
+        cfg = {"profiles_path": self._path, "model": "wespeaker-resnet34"}
+        if extra_cfg:
+            cfg.update(extra_cfg)
+        return SpeakerVerifier(config=cfg)
+
+    def test_enroll_single_clip(self):
+        """Enroll with one clip; stored profile equals that clip's embedding."""
+        emb = _random_emb()
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
+            instance = MockEmb.return_value
+            instance.embed.return_value = emb
+            v = self._make_verifier()
+            fd, wav = tempfile.mkstemp(suffix=".wav")
+            os.close(fd)
+            try:
+                result = v.enroll("Solo", [wav])
+            finally:
+                os.unlink(wav)
+        np.testing.assert_allclose(result, emb, atol=1e-5)
+
+    def test_enroll_overwrites_existing_profile(self):
+        """Re-enrolling the same name replaces the old profile entry."""
+        emb1 = _random_emb()
+        emb2 = _random_emb()
+        embs = [emb1, emb2]
+
+        def _side(path):
+            return embs.pop(0)
+
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
+            instance = MockEmb.return_value
+            instance.embed.side_effect = _side
+            v = self._make_verifier()
+            for _ in range(2):
+                fd, wav = tempfile.mkstemp(suffix=".wav")
+                os.close(fd)
+                try:
+                    v.enroll("Alice", [wav])
+                finally:
+                    os.unlink(wav)
+        # Only one "Alice" entry should be present
+        self.assertEqual(v.list_profiles().count("Alice"), 1)
+
+    def test_remove_profile_leaves_others(self):
+        """Removing one profile does not affect other enrolled profiles."""
+        emb = _random_emb()
+        with patch("speakeronnx.SpeakerEmbedder") as MockEmb:
+            instance = MockEmb.return_value
+            instance.embed.return_value = emb
+            v = self._make_verifier()
+            for name in ("Alice", "Bob"):
+                fd, wav = tempfile.mkstemp(suffix=".wav")
+                os.close(fd)
+                try:
+                    v.enroll(name, [wav])
+                finally:
+                    os.unlink(wav)
+        v.remove_profile("Alice")
+        self.assertNotIn("Alice", v.list_profiles())
+        self.assertIn("Bob", v.list_profiles())
+
+    def test_default_config_values(self):
+        """SpeakerVerifier uses documented defaults when config is minimal."""
+        from ovos_ww_verifier_plugin_speaker import SpeakerVerifier
+        v = SpeakerVerifier(config={"profiles_path": self._path})
+        self.assertAlmostEqual(v._threshold, 0.45)
+        self.assertTrue(v._fail_open)
+        self.assertEqual(v._model_alias, "wespeaker-resnet34")
+        self.assertEqual(v._sample_rate, 16000)
+        self.assertEqual(v._sample_width, 2)
+        self.assertEqual(v._channels, 1)
+
+
 if __name__ == "__main__":
     unittest.main()

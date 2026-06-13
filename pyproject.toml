@@ -51,3 +51,10 @@ where = ["."]
 
 [tool.setuptools.package-data]
 "ovos_ww_verifier_plugin_speaker" = ["**/*"]
+
+[tool.mypy]
+python_version = "3.9"
+ignore_missing_imports = true
+strict = false
+warn_unused_ignores = true
+warn_return_any = false

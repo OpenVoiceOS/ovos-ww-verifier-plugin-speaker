@@ -1,0 +1,17 @@
+name: OPM Check
+
+on:
+  pull_request:
+    branches: [dev]
+  workflow_dispatch:
+
+jobs:
+  opm_check:
+    uses: OpenVoiceOS/gh-automations/.github/workflows/opm-check.yml@dev
+    secrets: inherit
+    with:
+      plugin_type: auto             # auto-detects the opm.wake_word.verifier entry point
+      opm_require_found: true       # fail if OPM cannot discover the verifier
+      # The OVOS framework import alone is ~several seconds; the plugin itself
+      # imports lazily (speakeronnx/onnxruntime load on first verify, not at boot).
+      opm_perf_threshold_ms: 6000

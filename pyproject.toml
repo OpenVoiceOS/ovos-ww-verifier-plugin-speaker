@@ -24,6 +24,12 @@ dependencies = [
 test = [
     "pytest",
     "edge-tts",
+    # bus-sequence e2e: drive the verifier through a real DinkumVoiceLoop.
+    # Pinned to the alpha whose _detect_ww consults the verifier chain (the
+    # hotword-verifier gate) — the suppression tests are meaningless without it,
+    # so this is a hard requirement rather than a best-effort skip.
+    "ovoscope>=0.19.0a1",
+    "ovos-dinkum-listener==0.6.0a1",
 ]
 
 [project.scripts]
@@ -36,7 +42,7 @@ ovos-ww-verifier-speaker = "ovos_ww_verifier_plugin_speaker:SpeakerVerifier"
 Homepage = "https://github.com/TigreGotico/ovos-ww-verifier-plugin-speaker"
 
 [tool.setuptools.dynamic]
-version = {attr = "version.__version__"}
+version = {attr = "ovos_ww_verifier_plugin_speaker.version.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -20,12 +20,7 @@ import unittest
 
 import numpy as np
 
-try:
-    from ovoscope.voice_loop import MiniVoiceLoop, MockHotWordEngine
-    HAS_OVOSCOPE = True
-except ImportError:
-    HAS_OVOSCOPE = False
-
+from ovoscope.voice_loop import MiniVoiceLoop, MockHotWordEngine
 from ovos_ww_verifier_plugin_speaker import SpeakerVerifier
 
 SILENT_CHUNK = b"\x00" * 512
@@ -41,7 +36,6 @@ class _FakeEmbedder:
         return self._vec
 
 
-@unittest.skipUnless(HAS_OVOSCOPE, "ovoscope (>=0.19.0a1) not installed")
 class TestSpeakerVerifierBusGate(unittest.TestCase):
     """Drive the real SpeakerVerifier through MiniVoiceLoop and assert the bus."""
 

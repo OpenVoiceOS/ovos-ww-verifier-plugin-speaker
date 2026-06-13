@@ -1,30 +1,12 @@
 # Changelog
 
-## [0.0.1a4](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.1a4) (2026-06-13)
+## [0.0.2a1](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.2a1) (2026-06-13)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.1a3...0.0.1a4)
-
-**Merged pull requests:**
-
-- refactor: mypy config, additional enrollment edge-case tests [\#3](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/3) ([JarbasAl](https://github.com/JarbasAl))
-
-## [0.0.1a3](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.1a3) (2026-06-13)
-
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.1a2...0.0.1a3)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.1...0.0.2a1)
 
 **Merged pull requests:**
 
-- test: hard-require imports + committed audio fixtures \(no edge-tts/skips in CI\) [\#6](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/6) ([JarbasAl](https://github.com/JarbasAl))
-
-## [0.0.1a2](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.1a2) (2026-06-13)
-
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/61b7caa7451d166b4497fb638a9f4d1b323a7a14...0.0.1a2)
-
-**Merged pull requests:**
-
-- test: ovoscope e2e + shared CI workflows + docs [\#5](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/5) ([JarbasAl](https://github.com/JarbasAl))
-- docs: NLnet/NGI0 funding attribution [\#4](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/4) ([JarbasAl](https://github.com/JarbasAl))
-- feat: OVOS speaker verifier plugin [\#1](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/1) ([JarbasAl](https://github.com/JarbasAl))
+- Configure Renovate [\#2](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/2) ([renovate[bot]](https://github.com/apps/renovate))
 
 
 

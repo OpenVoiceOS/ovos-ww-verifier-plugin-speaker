@@ -23,7 +23,6 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "pytest",
-    "edge-tts",
     # bus-sequence e2e: drive the verifier through a real DinkumVoiceLoop.
     # Pinned to the alpha whose _detect_ww consults the verifier chain (the
     # hotword-verifier gate) — the suppression tests are meaningless without it,
@@ -31,6 +30,9 @@ test = [
     "ovoscope>=0.19.0a1",
     "ovos-dinkum-listener==0.6.0a1",
 ]
+# Audio fixtures are committed (tests/fixtures/); regenerate them locally with
+# `python tests/generate_fixtures.py`, which needs edge-tts + ffmpeg. These are
+# deliberately NOT in `test` so CI never synthesises audio.
 
 [project.scripts]
 ovos-speaker-enroll = "ovos_ww_verifier_plugin_speaker.__main__:main"

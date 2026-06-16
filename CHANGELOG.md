@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.2a3](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.2a3) (2026-06-16)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.2a2...0.0.2a3)
+
+**Merged pull requests:**
+
+- docs: fix verifier config schema \(listener.ww\_verifiers\) [\#12](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/12) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.2a2](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.2a2) (2026-06-13)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.2a1...0.0.2a2)

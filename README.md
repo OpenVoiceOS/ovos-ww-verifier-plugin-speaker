@@ -35,15 +35,16 @@ More clips (5–30 s total per person) → more robust profile.
 
 ## OVOS configuration
 
-Add to `~/.config/mycroft/mycroft.conf` (or OpenVoiceOS equivalent):
+Wake-word verifiers are loaded by [`ovos-dinkum-listener`](https://github.com/OpenVoiceOS/ovos-dinkum-listener)
+(≥ 0.6.0) from `listener.ww_verifiers`. Each key is a verifier plugin's
+entry-point name; its value is that plugin's config. Add to
+`~/.config/mycroft/mycroft.conf` (or the OpenVoiceOS equivalent):
 
 ```json
 {
-  "hotwords": {
-    "hey mycroft": {
-      "module": "...",
-      "verifier": "ovos-ww-verifier-speaker",
-      "verifier_config": {
+  "listener": {
+    "ww_verifiers": {
+      "ovos-ww-verifier-speaker": {
         "model": "wespeaker-resnet34",
         "threshold": 0.45,
         "fail_open": true
@@ -52,6 +53,17 @@ Add to `~/.config/mycroft/mycroft.conf` (or OpenVoiceOS equivalent):
   }
 }
 ```
+
+> **Installing the plugin enables it.** The listener runs every installed
+> verifier whose config does not set `"enabled": false`. With no entry in
+> `ww_verifiers` the plugin still loads with its defaults — and because
+> `fail_open` defaults to `true`, it accepts everything until you enroll at
+> least one profile. Enroll first, then tune. To install the plugin without
+> activating it, set `"enabled": false`:
+>
+> ```json
+> {"listener": {"ww_verifiers": {"ovos-ww-verifier-speaker": {"enabled": false}}}}
+> ```
 
 ## Configuration keys
 

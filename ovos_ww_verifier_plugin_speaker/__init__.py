@@ -24,8 +24,10 @@ WAV clips.  The more clips, the more robust the profile.
 Audio input
 -----------
 The ``verify(chunk)`` method accepts raw 16-bit PCM bytes (any sample rate — audio
-is passed via stdlib wave loading internally).  Audio shorter than ~0.5 seconds
-may produce unreliable embeddings; prefer ~1–5 seconds of post-WW audio.
+is passed via stdlib wave loading internally).  When driven by the listener the
+chunk is the accumulated *wake-word* audio window (the "hey mycroft" utterance
+itself), not the command that follows it.  Audio shorter than ~0.5 seconds may
+produce unreliable embeddings, so a clearly-spoken wake word is the sweet spot.
 
 Configuration
 -------------

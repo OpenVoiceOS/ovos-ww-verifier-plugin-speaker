@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.2a4](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.2a4) (2026-08-01)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.2a3...0.0.2a4)
+
+**Merged pull requests:**
+
+- docs: rewrite README in Simplified Technical English [\#14](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/14) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.2a3](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.2a3) (2026-06-16)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.2a2...0.0.2a3)
@@ -18,15 +26,11 @@
 
 ## [0.0.2a1](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.2a1) (2026-06-13)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.1a4...0.0.2a1)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.1...0.0.2a1)
 
 **Merged pull requests:**
 
 - Configure Renovate [\#2](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/2) ([renovate[bot]](https://github.com/apps/renovate))
-
-## [0.0.1a4](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.1a4) (2026-06-13)
-
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.1...0.0.1a4)
 
 
 

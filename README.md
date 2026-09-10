@@ -65,6 +65,32 @@ this to `~/.config/mycroft/mycroft.conf` (or the OpenVoiceOS equivalent):
 > {"listener": {"ww_verifiers": {"ovos-ww-verifier-speaker": {"enabled": false}}}}
 > ```
 
+## What happens on a wake word
+
+The listener runs the verifier inside wake-word detection, on the audio window
+that triggered the engine. The outcome decides what reaches the bus:
+
+| speaker | profiles enrolled | `fail_open` | `recognizer_loop:wakeword` | `recognizer_loop:record_begin` |
+|---|---|---|---|---|
+| enrolled member | yes | any | emitted | emitted |
+| anyone else | yes | any | suppressed | suppressed |
+| anyone | none | `true` | emitted | emitted |
+| anyone | none | `false` | suppressed | suppressed |
+
+A rejected speaker suppresses the wake-word event itself, not only the
+recording, so nothing downstream sees the activation. Each decision is one
+INFO line in the listener log naming the matched or best-matching profile,
+the cosine score and the threshold applied.
+
+This is the flow proven on a real `ovos-dinkum-listener` voice loop with
+`ovos-ww-plugin-precise-onnx` and its default `hey_mycroft` model: two
+synthetic voices both trigger precise-onnx on "hey mycroft, what time is it";
+with voice A enrolled and `fail_open` false, A's clip produces both events
+(score 0.78 at threshold 0.45) and voice B's clip produces neither
+(score 0.09). To repeat it, enroll two clips of one voice, set the
+configuration above with `"fail_open": false`, start the listener, and speak
+the wake word as the enrolled voice and as another voice.
+
 ## Configuration keys
 
 | Key | Type | Default | Description |
@@ -134,9 +160,12 @@ pytest tests/test_unit.py tests/test_ovoscope_e2e.py   # fast, offline
   (`ovoscope.MiniVoiceLoop`) and asserts a rejected speaker suppresses
   `recognizer_loop:record_begin` on the bus. It is fast and needs no model download.
 - `test_e2e.py` / `test_ovoscope_models_e2e.py`: real-model tests over every
-  `speakeronnx` model. They use `edge-tts` synthetic voices to confirm only the
-  enrolled speaker triggers the wake word. These tests need `edge-tts` and
-  `ffmpeg`, and they download models. They skip automatically when those are unavailable.
+  `speakeronnx` model. They read the committed synthetic-voice fixtures under
+  `tests/fixtures/` (two enrolment clips and one verify clip of voice A, one
+  guest clip of voice B) and confirm only the enrolled speaker triggers the
+  wake word. They download the models on first run and never skip. Regenerate
+  the fixtures with `python tests/generate_fixtures.py`, which needs `edge-tts`
+  and `ffmpeg`.
 
 ## Dependencies
 

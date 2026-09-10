@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.3a1](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.3a1) (2026-09-10)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.2a4...0.0.3a1)
+
+**Merged pull requests:**
+
+- fix\(deps\): floor-pin ovos-dinkum-listener so the test extra resolves without fann2 [\#17](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/17) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [0.0.2a4](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.2a4) (2026-08-01)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.2a3...0.0.2a4)

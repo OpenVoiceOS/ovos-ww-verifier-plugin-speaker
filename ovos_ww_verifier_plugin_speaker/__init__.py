@@ -62,6 +62,7 @@ import numpy as np
 # imported lazily inside the methods that need it so that merely loading this
 # plugin class — as OPM does for every installed plugin at startup — stays cheap.
 from ovos_plugin_manager.templates.hotwords import HotWordVerifier
+from ovos_utils.log import LOG
 
 if False:  # type-checking only; avoids the heavy import at module load
     from speakeronnx import SpeakerEmbedder
@@ -224,10 +225,14 @@ class SpeakerVerifier(HotWordVerifier):
                 pass
 
         from speakeronnx import cosine
-        for name, profile_emb in profiles.items():
-            score = cosine(emb, profile_emb)
+        scores = {name: cosine(emb, profile_emb) for name, profile_emb in profiles.items()}
+        for name, score in scores.items():
             if score >= self._threshold_for(name):
+                LOG.info(f"speaker verifier accepted {name} (score {score:.3f}, threshold {self._threshold_for(name)})")
                 return True
+        best = max(scores, key=scores.get)
+        LOG.info(f"speaker verifier rejected unknown speaker (best match {best} score {scores[best]:.3f}, "
+                 f"threshold {self._threshold_for(best)})")
         return False
 
     def enroll(self, name: str, wav_paths: List[str]) -> np.ndarray:

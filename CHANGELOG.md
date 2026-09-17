@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.4a1](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.4a1) (2026-09-17)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.3a1...0.0.4a1)
+
+**Merged pull requests:**
+
+- fix: log every verifier decision with the speaker, score and threshold [\#19](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/19) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [0.0.3a1](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.3a1) (2026-09-10)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.2a4...0.0.3a1)

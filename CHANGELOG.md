@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.4a2](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.4a2) (2026-09-18)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.4a1...0.0.4a2)
+
+**Merged pull requests:**
+
+- docs: state the wake-word outcome per speaker and the flow proven on a live listener [\#20](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/20) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [0.0.4a1](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.4a1) (2026-09-17)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.3a1...0.0.4a1)

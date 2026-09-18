@@ -1,22 +1,60 @@
 # Changelog
 
-## [0.0.1a3](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.1a3) (2026-06-13)
+## [0.0.4a2](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.4a2) (2026-09-18)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.1a2...0.0.1a3)
-
-**Merged pull requests:**
-
-- test: hard-require imports + committed audio fixtures \(no edge-tts/skips in CI\) [\#6](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/6) ([JarbasAl](https://github.com/JarbasAl))
-
-## [0.0.1a2](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.1a2) (2026-06-13)
-
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/61b7caa7451d166b4497fb638a9f4d1b323a7a14...0.0.1a2)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.4a1...0.0.4a2)
 
 **Merged pull requests:**
 
-- test: ovoscope e2e + shared CI workflows + docs [\#5](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/5) ([JarbasAl](https://github.com/JarbasAl))
-- docs: NLnet/NGI0 funding attribution [\#4](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/4) ([JarbasAl](https://github.com/JarbasAl))
-- feat: OVOS speaker verifier plugin [\#1](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/1) ([JarbasAl](https://github.com/JarbasAl))
+- docs: state the wake-word outcome per speaker and the flow proven on a live listener [\#20](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/20) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
+## [0.0.4a1](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.4a1) (2026-09-17)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.3a1...0.0.4a1)
+
+**Merged pull requests:**
+
+- fix: log every verifier decision with the speaker, score and threshold [\#19](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/19) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
+## [0.0.3a1](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.3a1) (2026-09-10)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.2a4...0.0.3a1)
+
+**Merged pull requests:**
+
+- fix\(deps\): floor-pin ovos-dinkum-listener so the test extra resolves without fann2 [\#17](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/17) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
+## [0.0.2a4](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.2a4) (2026-08-01)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.2a3...0.0.2a4)
+
+**Merged pull requests:**
+
+- docs: rewrite README in Simplified Technical English [\#14](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/14) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.0.2a3](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.2a3) (2026-06-16)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.2a2...0.0.2a3)
+
+**Merged pull requests:**
+
+- docs: fix verifier config schema \(listener.ww\_verifiers\) [\#12](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/12) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.0.2a2](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.2a2) (2026-06-13)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.2a1...0.0.2a2)
+
+**Merged pull requests:**
+
+- docs: standardize NGI0 Commons Fund attribution [\#10](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/10) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.0.2a1](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/tree/0.0.2a1) (2026-06-13)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/compare/0.0.1...0.0.2a1)
+
+**Merged pull requests:**
+
+- Configure Renovate [\#2](https://github.com/OpenVoiceOS/ovos-ww-verifier-plugin-speaker/pull/2) ([renovate[bot]](https://github.com/apps/renovate))
 
 
 

@@ -28,7 +28,7 @@ test = [
     # hotword-verifier gate) — the suppression tests are meaningless without it,
     # so this is a hard requirement rather than a best-effort skip.
     "ovoscope>=0.19.0a1",
-    "ovos-dinkum-listener==0.6.0a1",
+    "ovos-dinkum-listener>=0.6.0a1",
 ]
 # Audio fixtures are committed (tests/fixtures/); regenerate them locally with
 # `python tests/generate_fixtures.py`, which needs edge-tts + ffmpeg. These are

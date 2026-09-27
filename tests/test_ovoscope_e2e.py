@@ -53,6 +53,7 @@ class TestSpeakerVerifierBusGate(unittest.TestCase):
 
     def _verifier(self, **cfg):
         cfg.setdefault("profiles_path", self._profiles_path)
+        cfg.setdefault("bus_surface", False)  # no bus in this harness
         return SpeakerVerifier(config=cfg)
 
     # -- empty roster: fail-open policy ---------------------------------

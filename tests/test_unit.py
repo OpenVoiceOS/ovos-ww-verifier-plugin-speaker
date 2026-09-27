@@ -48,6 +48,7 @@ class TestProfilePersistence(unittest.TestCase):
         cfg = {"profiles_path": self._path, "model": "wespeaker-resnet34"}
         if extra_cfg:
             cfg.update(extra_cfg)
+        cfg.setdefault("bus_surface", False)  # no bus in a unit test
         return SpeakerVerifier(config=cfg)
 
     def test_empty_profiles_returns_empty_list(self):
@@ -131,6 +132,7 @@ class TestVerifyLogic(unittest.TestCase):
                "threshold": 0.45}
         if extra_cfg:
             cfg.update(extra_cfg)
+        cfg.setdefault("bus_surface", False)  # no bus in a unit test
         return SpeakerVerifier(config=cfg)
 
     def _enroll_profile(self, verifier, name: str, emb: np.ndarray):
@@ -276,6 +278,7 @@ class TestEnrollEdgeCases(unittest.TestCase):
         cfg = {"profiles_path": self._path, "model": "wespeaker-resnet34"}
         if extra_cfg:
             cfg.update(extra_cfg)
+        cfg.setdefault("bus_surface", False)  # no bus in a unit test
         return SpeakerVerifier(config=cfg)
 
     def test_enroll_single_clip(self):
@@ -337,7 +340,8 @@ class TestEnrollEdgeCases(unittest.TestCase):
     def test_default_config_values(self):
         """SpeakerVerifier uses documented defaults when config is minimal."""
         from ovos_ww_verifier_plugin_speaker import SpeakerVerifier
-        v = SpeakerVerifier(config={"profiles_path": self._path})
+        v = SpeakerVerifier(config={"profiles_path": self._path,
+                                    "bus_surface": False})
         self.assertAlmostEqual(v._threshold, 0.45)
         self.assertTrue(v._fail_open)
         self.assertEqual(v._model_alias, "wespeaker-resnet34")

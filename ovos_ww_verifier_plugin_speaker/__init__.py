@@ -44,6 +44,27 @@ Plugin config keys (nested under the verifier's entry point in OVOS config):
 ``per_profile_thresholds`` (dict, optional):
     Per-name overrides, e.g. ``{"Alice": 0.5, "Bob": 0.4}``.  Falls back to
     ``threshold`` for names not listed.
+``bus_surface`` (bool):
+    Serve the OVOS-SPEAKER-1 topics.  Default ``True``.  When no bus is passed
+    to the constructor the plugin opens a client of its own; a failure to
+    connect is logged and the verifier keeps verifying.
+``allow_bus_enrollment`` (bool):
+    Let ``ovos.speaker.enroll`` and ``ovos.speaker.delete`` change the roster.
+    Default ``False``.  While it is off both answer ``enrollment disabled``.
+    Read on before turning it on: anything that can publish on the bus can then
+    add or remove a trusted voice, and a handler cannot tell an administration
+    client from any other publisher (OVOS-MSG-1 3.4).
+``max_audio_bytes`` (int):
+    The bound on the decoded audio one request may carry.  Default 8 MiB.
+    Past it the answer is ``clip too large``.
+
+Bus surface
+-----------
+``ovos.speaker.enroll``, ``ovos.speaker.delete``, ``ovos.speaker.list`` and
+``ovos.speaker.verify``, each answered by its ``.response``, as OVOS-SPEAKER-1
+fixes them.  That specification is proposed, not merged
+(OpenVoiceOS/architecture#277); the topic names follow it and change with it.  The handlers are in :mod:`ovos_ww_verifier_plugin_speaker.bus` and
+call the same methods the console script calls.
 """
 
 from __future__ import annotations
@@ -130,7 +151,7 @@ class SpeakerVerifier(HotWordVerifier):
         Plugin configuration dict.  See module docstring for keys.
     """
 
-    def __init__(self, config: Optional[Dict] = None):
+    def __init__(self, config: Optional[Dict] = None, bus=None):
         super().__init__(config=config)
         cfg = self.config
 
@@ -153,6 +174,79 @@ class SpeakerVerifier(HotWordVerifier):
         self._sample_rate: int = int(cfg.get("sample_rate", 16000))
         self._sample_width: int = int(cfg.get("sample_width", 2))  # bytes
         self._channels: int = int(cfg.get("channels", 1))
+
+        # OVOS-SPEAKER-1 bus surface
+        self.bus = None
+        self._bus_surface = None
+        self._owns_bus = False
+        if bus is not None:
+            self.attach_bus(bus)
+        elif bool(cfg.get("bus_surface", True)):
+            self._connect_bus()
+
+    # ------------------------------------------------------------------
+    # The OVOS-SPEAKER-1 bus surface
+    # ------------------------------------------------------------------
+
+    def attach_bus(self, bus) -> None:
+        """Serve the four OVOS-SPEAKER-1 topics on *bus*.
+
+        The handlers live in :mod:`ovos_ww_verifier_plugin_speaker.bus` and
+        call the same methods ``ovos-speaker-enroll`` calls, so the console
+        script and the bus are two thin callers of one API.
+
+        ``ovos.speaker.enroll`` and ``ovos.speaker.delete`` answer
+        ``enrollment disabled`` unless ``allow_bus_enrollment`` is on. The bus
+        inside a device is not authenticated and OVOS-MSG-1 section 3.4 makes
+        ``source`` a string the caller chose, so a handler cannot tell an
+        administration client from any other publisher; the gate is the
+        boundary, and it is closed unless a deployment opens it.
+        """
+        from ovos_ww_verifier_plugin_speaker.bus import (
+            DEFAULT_MAX_AUDIO_BYTES,
+            SpeakerBusSurface,
+        )
+
+        cfg = self.config
+        self.bus = bus
+        self._bus_surface = SpeakerBusSurface(
+            self, bus,
+            allow_enrollment=bool(cfg.get("allow_bus_enrollment", False)),
+            max_audio_bytes=int(cfg.get("max_audio_bytes",
+                                        DEFAULT_MAX_AUDIO_BYTES)),
+        )
+        self._bus_surface.register()
+
+    def _connect_bus(self) -> None:
+        """Open a bus client of this plugin's own and serve the surface on it.
+
+        ``HotWordVerifier`` takes a config and no bus, and the audio input
+        service builds a verifier with ``plug_cls(config=cfg)``, so a verifier
+        that wants a bus opens one. ``RedisAudioTransformer`` in
+        ovos-audio-transformer-redis-publish does the same.
+
+        A failure to connect is logged and never raised: the verifier's real
+        job is to answer the audio input service, and it must keep doing that
+        on a device with no bus, in the console script, and under a test.
+        """
+        try:
+            from ovos_bus_client import MessageBusClient
+            bus = MessageBusClient()
+            bus.run_in_thread()
+            self._owns_bus = True
+            self.attach_bus(bus)
+        except Exception as err:
+            LOG.warning(f"speaker verifier could not open a bus client, the "
+                        f"enrollment surface is not served: {err}")
+
+    def shutdown(self) -> None:
+        """Close the bus client this plugin opened, if it opened one."""
+        if self._owns_bus and self.bus is not None:
+            try:
+                self.bus.close()
+            except Exception:
+                LOG.exception("speaker verifier failed to close its bus client")
+        self._owns_bus = False
 
     # ------------------------------------------------------------------
     # Private helpers
@@ -224,16 +318,56 @@ class SpeakerVerifier(HotWordVerifier):
             except OSError:
                 pass
 
+        name, score, accepted = self._decide(emb, profiles)
+        if accepted:
+            LOG.info(f"speaker verifier accepted {name} (score {score:.3f}, threshold {self._threshold_for(name)})")
+        else:
+            LOG.info(f"speaker verifier rejected unknown speaker (best match {name} score {score:.3f}, "
+                     f"threshold {self._threshold_for(name)})")
+        return accepted
+
+    def _decide(self, emb, profiles: Dict[str, np.ndarray]
+                ) -> Tuple[str, float, bool]:
+        """Score *emb* against *profiles* and say whether it is accepted.
+
+        The one place the acceptance rule lives, so that the answer
+        ``ovos.speaker.verify`` gives on the bus is the answer the audio input
+        service gets, and not a second rule that can drift from it.
+
+        @param emb: the embedding of the audio under test
+        @param profiles: the enrolled roster, which must not be empty
+        @return: the best matching name, its score, and whether it is accepted
+        """
         from speakeronnx import cosine
-        scores = {name: cosine(emb, profile_emb) for name, profile_emb in profiles.items()}
+        scores = {name: cosine(emb, profile_emb)
+                  for name, profile_emb in profiles.items()}
         for name, score in scores.items():
             if score >= self._threshold_for(name):
-                LOG.info(f"speaker verifier accepted {name} (score {score:.3f}, threshold {self._threshold_for(name)})")
-                return True
+                return name, float(score), True
         best = max(scores, key=scores.get)
-        LOG.info(f"speaker verifier rejected unknown speaker (best match {best} score {scores[best]:.3f}, "
-                 f"threshold {self._threshold_for(best)})")
-        return False
+        return best, float(scores[best]), False
+
+    def identify(self, wav_path: str) -> Tuple[Optional[str], Optional[float],
+                                               bool, bool]:
+        """Say which enrolled speaker a WAV file matches.
+
+        This is what ``ovos.speaker.verify`` answers with. It reads the roster
+        and changes nothing.
+
+        @param wav_path: a readable WAV file
+        @return: the best matching name or None, its score or None, whether
+                 the deployment accepts this voice, and whether the roster is
+                 empty
+        """
+        profiles = self._get_profiles()
+        if not profiles:
+            # The same rule verify() applies: with nobody enrolled, the
+            # deployment's fail-open setting is the answer, and there is no
+            # name and no score to report.
+            return None, None, self._fail_open, True
+        emb = self._get_embedder().embed(wav_path)
+        name, score, accepted = self._decide(emb, profiles)
+        return name, score, accepted, False
 
     def enroll(self, name: str, wav_paths: List[str]) -> np.ndarray:
         """Enroll a speaker by extracting and averaging embeddings from WAV clips.

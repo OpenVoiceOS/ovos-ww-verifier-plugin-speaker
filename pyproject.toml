@@ -29,6 +29,10 @@ test = [
     # so this is a hard requirement rather than a best-effort skip.
     "ovoscope>=0.19.0a1",
     "ovos-dinkum-listener>=0.6.0a1",
+    # bus-surface e2e: a real ovos-messagebus process, not a FakeBus. The
+    # OVOS-SPEAKER-1 handlers are only worth testing over a real websocket,
+    # so an absent bus fails those tests rather than skipping them.
+    "ovos-messagebus>=0.1.0",
 ]
 # Audio fixtures are committed (tests/fixtures/); regenerate them locally with
 # `python tests/generate_fixtures.py`, which needs edge-tts + ffmpeg. These are

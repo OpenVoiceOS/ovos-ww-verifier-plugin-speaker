@@ -20,6 +20,7 @@ def enrolled_verifier(tmp_path_factory):
     """A SpeakerVerifier with voice A enrolled (default wespeaker-resnet34)."""
     profiles_path = str(tmp_path_factory.mktemp("profiles") / "profiles.json")
     v = SpeakerVerifier(config={
+        "bus_surface": False,  # no bus in this test
         "model": "wespeaker-resnet34",
         "threshold": 0.45,
         "fail_open": False,

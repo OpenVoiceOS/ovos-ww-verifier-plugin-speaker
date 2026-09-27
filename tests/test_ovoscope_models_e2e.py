@@ -39,6 +39,7 @@ def _triggers_wakeword(verifier, audio_pcm: bytes) -> bool:
 def test_only_authorised_speaker_triggers_wakeword(model_alias, tmp_path):
     """For each embedding model, A triggers the WW and guest B is rejected."""
     verifier = SpeakerVerifier(config={
+        "bus_surface": False,  # no bus in this test
         "model": model_alias,
         "profiles_path": str(tmp_path / "profiles.json"),
     })

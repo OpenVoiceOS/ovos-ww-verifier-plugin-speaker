@@ -23,7 +23,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    cfg: dict = {"model": args.model}
+    # The console script enrolls and exits. It must not open a bus client:
+    # its boundary is the shell account that ran it, which is the boundary the
+    # OVOS-SPEAKER-1 gate exists to replace for a client that has no shell.
+    cfg: dict = {"model": args.model, "bus_surface": False}
     if args.profiles_path:
         cfg["profiles_path"] = args.profiles_path
 

@@ -21,6 +21,14 @@ name under the XDG data directory (``~/.local/share/ovos_speaker_verifier/``).
 Each profile is the L2-normalised mean of embeddings extracted from the enrollment
 WAV clips.  The more clips, the more robust the profile.
 
+The number of clips and the total audio seconds behind each profile are kept in a
+sidecar file next to the profiles file (``profiles.meta.json``).  The mean embedding
+does not record them and nothing can recover them later, so ``enroll`` writes them
+at the time it has them.  The profiles file itself keeps the ``{name: [floats]}``
+shape, so any version of this plugin reads a profiles file written by any other.
+``profile_info`` and ``list_profiles_detailed`` report the provenance; both report
+``None`` for a profile enrolled before this plugin recorded it.
+
 Audio input
 -----------
 The ``verify(chunk)`` method accepts raw 16-bit PCM bytes (any sample rate — audio
@@ -94,6 +102,52 @@ def _save_profiles(profiles: Dict[str, List[float]], path: str) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         json.dump(profiles, f)
+
+
+def _meta_path(profiles_path: str) -> str:
+    """Path of the provenance sidecar that belongs to a profiles file.
+
+    Provenance is kept beside the profiles file, not inside it.  The profiles
+    file stays ``{name: [floats]}``, so an install of any version reads a
+    profiles file written by any other version.  A version that does not know
+    about provenance simply ignores this sidecar.
+    """
+    base, _ext = os.path.splitext(profiles_path)
+    return base + ".meta.json"
+
+
+def _load_meta(profiles_path: str) -> Dict[str, Dict[str, float]]:
+    """Load the provenance sidecar. A missing or damaged file reads empty."""
+    path = _meta_path(profiles_path)
+    if not os.path.isfile(path):
+        return {}
+    try:
+        with open(path, "r") as f:
+            meta = json.load(f)
+    except (ValueError, OSError):
+        LOG.warning(f"ignoring damaged provenance sidecar: {path}")
+        return {}
+    return meta if isinstance(meta, dict) else {}
+
+
+def _save_meta(meta: Dict[str, Dict[str, float]], profiles_path: str) -> None:
+    """Persist the provenance sidecar."""
+    path = _meta_path(profiles_path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(meta, f)
+
+
+def _wav_seconds(path: str) -> float:
+    """Duration of a WAV file in seconds. An unreadable file counts as 0."""
+    try:
+        with wave.open(path, "rb") as w:
+            rate = w.getframerate()
+            if rate:
+                return w.getnframes() / float(rate)
+    except (wave.Error, OSError, EOFError):
+        LOG.warning(f"cannot read the duration of {path}")
+    return 0.0
 
 
 def _bytes_to_wav_file(chunk: bytes, sample_rate: int = 16000,
@@ -262,10 +316,21 @@ class SpeakerVerifier(HotWordVerifier):
         if norm > 0:
             mean_emb /= norm
 
-        # Persist
+        # Persist. The embedding stays a bare list; the provenance that a
+        # client needs to tell a thin profile from a thorough one goes in the
+        # sidecar, because the mean embedding does not record how many clips
+        # or how much audio went into it and nothing can recover that later.
         raw = _load_profiles(self._profiles_path)
         raw[name] = mean_emb.tolist()
         _save_profiles(raw, self._profiles_path)
+
+        meta = _load_meta(self._profiles_path)
+        meta[name] = {
+            "clips": len(wav_paths),
+            "seconds": round(sum(_wav_seconds(p) for p in wav_paths), 3),
+        }
+        _save_meta(meta, self._profiles_path)
+
         self._invalidate_profile_cache()
 
         return mean_emb
@@ -280,9 +345,44 @@ class SpeakerVerifier(HotWordVerifier):
             return False
         del raw[name]
         _save_profiles(raw, self._profiles_path)
+
+        meta = _load_meta(self._profiles_path)
+        if meta.pop(name, None) is not None:
+            _save_meta(meta, self._profiles_path)
+
         self._invalidate_profile_cache()
         return True
 
     def list_profiles(self) -> List[str]:
         """Return the names of all enrolled speakers."""
         return list(_load_profiles(self._profiles_path).keys())
+
+    def profile_info(self, name: str) -> Optional[Dict[str, Optional[float]]]:
+        """Return the enrollment provenance of one profile.
+
+        Returns ``None`` if no profile has that name.  For a profile that
+        exists, returns ``clips`` and ``seconds``.  Both are ``None`` for a
+        profile enrolled before this plugin recorded provenance: the value is
+        not derivable from the stored mean embedding, so it stays unknown
+        until that speaker enrolls again.
+        """
+        if name not in _load_profiles(self._profiles_path):
+            return None
+        row = _load_meta(self._profiles_path).get(name) or {}
+        return {"clips": row.get("clips"), "seconds": row.get("seconds")}
+
+    def list_profiles_detailed(self) -> List[Dict[str, Optional[float]]]:
+        """Return one row per enrolled speaker: ``name``, ``clips``, ``seconds``.
+
+        This is the roster a client needs to show how well a profile was
+        enrolled.  ``clips`` and ``seconds`` are ``None`` for a profile
+        enrolled before provenance was recorded.
+        """
+        meta = _load_meta(self._profiles_path)
+        rows = []
+        for name in _load_profiles(self._profiles_path):
+            row = meta.get(name) or {}
+            rows.append({"name": name,
+                         "clips": row.get("clips"),
+                         "seconds": row.get("seconds")})
+        return rows

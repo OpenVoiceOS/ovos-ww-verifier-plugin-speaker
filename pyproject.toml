@@ -29,6 +29,16 @@ test = [
     # so this is a hard requirement rather than a best-effort skip.
     "ovoscope>=0.19.0a1",
     "ovos-dinkum-listener>=0.6.0a1",
+    # model2vec arrives through ovos-m2v-pipeline, which asks for
+    # model2vec[inference]. That extra was removed in model2vec 0.9.0, so the
+    # resolver backtracks looking for a release that still has it and lands on
+    # 0.2.4, which drags transformers 2.3.0 (2019) and tokenizers 0.13.3.
+    # tokenizers 0.13.3 has no 3.12 wheel, so the job tried to build it from
+    # Rust source and failed. This floor keeps the resolver on a modern
+    # model2vec, where tokenizers is 0.23.2 and ships a cp310-abi3 wheel.
+    # ovos-m2v-pipeline also declares scikit-learn and skops directly, so the
+    # missing extra costs nothing. The extra itself is the upstream defect.
+    "model2vec>=0.8.2",
 ]
 # Audio fixtures are committed (tests/fixtures/); regenerate them locally with
 # `python tests/generate_fixtures.py`, which needs edge-tts + ffmpeg. These are

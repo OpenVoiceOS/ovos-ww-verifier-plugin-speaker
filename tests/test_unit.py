@@ -178,7 +178,11 @@ class TestVerifyLogic(unittest.TestCase):
             instance.embed.return_value = unknown_emb
             v._embedder = instance
             chunk = _make_wav_bytes()
-            self.assertFalse(v.verify(chunk))
+            with patch("ovos_ww_verifier_plugin_speaker.LOG.info") as info:
+                self.assertFalse(v.verify(chunk))
+        line = next(c.args[0] for c in info.call_args_list if "speaker verifier rejected" in c.args[0])
+        self.assertIn("best match Alice score 0.000", line)
+        self.assertIn("threshold 0.45", line)
 
     def test_multi_profile_any_match_accepts(self):
         """If any enrolled profile matches, verify accepts."""
